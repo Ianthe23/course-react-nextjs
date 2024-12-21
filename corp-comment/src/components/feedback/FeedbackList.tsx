@@ -1,11 +1,14 @@
 import FeedbackItem from "./FeedbackItem";
 import Spinner from "../Spinner";
 import ErrorMessage from "../ErrorMessage";
-import { useFeedbackItemsContext } from "../../lib/hooks";
+import { useFeedbackItemsStore } from "../../stores/feedbackItemStore";
 
 export default function FeedbackList() {
-  const { filteredFeedbackItems, isLoading, errorMessage } =
-    useFeedbackItemsContext(); // folosesc hook-ul custom pentru a accesa contextul
+  const isLoading = useFeedbackItemsStore((state) => state.isLoading);
+  const errorMessage = useFeedbackItemsStore((state) => state.errorMessage);
+  const filteredFeedbackItems = useFeedbackItemsStore((state) =>
+    state.getFilteredFeedbackItems()
+  );
 
   return (
     //spinner pentru loading prima data
