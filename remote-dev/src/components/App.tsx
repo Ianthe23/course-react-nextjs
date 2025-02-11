@@ -17,10 +17,12 @@ import { useJobItems } from "../lib/hooks";
 function App() {
   const [searchText, setSearchText] = useState("");
   const [jobItems, isLoading] = useJobItems(searchText);
+  const [activeId, setActiveId] = useState<number | null>(null);
 
   useEffect(() => {
     const handleHashChange = () => {
-      const id = console.log(window.location.hash.slice(1));
+      const id = +window.location.hash.slice(1); // Remove the leading `#` and convert to number
+      setActiveId(id);
     };
     handleHashChange();
 
