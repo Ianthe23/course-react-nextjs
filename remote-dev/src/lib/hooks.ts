@@ -49,6 +49,7 @@ export function useJobItems(searchText: string) {
 
   // this is called derived state
   const jobItemsSliced = jobItems.slice(0, 7); // index 7 is not included
+  const totalNumberOfResults = jobItems.length; // also a derived state
 
   useEffect(() => {
     if (!searchText) {
@@ -66,5 +67,5 @@ export function useJobItems(searchText: string) {
     fetchData();
   }, [searchText]);
 
-  return [jobItemsSliced, isLoading] as const;
+  return [jobItemsSliced, isLoading, totalNumberOfResults] as const;
 }
