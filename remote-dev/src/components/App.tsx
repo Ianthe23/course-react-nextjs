@@ -14,6 +14,7 @@ import JobList from "./JobList";
 import PaginationControls from "./PaginationControls";
 import { useDebounce, useJobItems } from "../lib/hooks";
 import { Toaster } from "react-hot-toast";
+import { RESULTS_PER_PAGE } from "../lib/constants";
 
 function App() {
   // state
@@ -25,9 +26,12 @@ function App() {
 
   // derived state
   const jobItemsSliced =
-    jobItems?.slice((currentPage - 1) * 7, currentPage * 7) || []; // index 7 is not included
+    jobItems?.slice(
+      (currentPage - 1) * RESULTS_PER_PAGE,
+      currentPage * RESULTS_PER_PAGE
+    ) || []; // index 7 is not included
   const totalNumberOfResults = jobItems?.length || 0; // also a derived state
-  const totalNumberOfPages = totalNumberOfResults / 7;
+  const totalNumberOfPages = totalNumberOfResults / RESULTS_PER_PAGE;
 
   // event handlers or actions
   const handleChangePage = (direction: "next" | "previous") => {
