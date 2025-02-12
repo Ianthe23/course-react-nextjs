@@ -24,8 +24,10 @@ function App() {
   console.log(currentPage);
 
   // derived state
-  const jobItemsSliced = jobItems?.slice(0, 7) || []; // index 7 is not included
+  const jobItemsSliced =
+    jobItems?.slice((currentPage - 1) * 7, currentPage * 7) || []; // index 7 is not included
   const totalNumberOfResults = jobItems?.length || 0; // also a derived state
+  const totalNumberOfPages = totalNumberOfResults / 7;
 
   // event handlers or actions
   const handleChangePage = (direction: "next" | "previous") => {
@@ -59,6 +61,7 @@ function App() {
           <JobList jobItems={jobItemsSliced} isLoading={isLoading} />
           <PaginationControls
             currentPage={currentPage}
+            totalNumberOfPages={totalNumberOfPages}
             onClick={handleChangePage}
           />
         </Sidebar>
