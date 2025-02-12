@@ -17,8 +17,11 @@ import { useDebounce, useJobItems } from "../lib/hooks";
 function App() {
   const [searchText, setSearchText] = useState("");
   const debouncedSearchText = useDebounce(searchText, 250);
-  const { jobItemsSliced, isLoading, totalNumberOfResults } =
-    useJobItems(debouncedSearchText);
+  const { jobItems, isLoading } = useJobItems(debouncedSearchText);
+
+  // this is called derived state
+  const jobItemsSliced = jobItems?.slice(0, 7) || []; // index 7 is not included
+  const totalNumberOfResults = jobItems?.length || 0; // also a derived state
 
   return (
     <>

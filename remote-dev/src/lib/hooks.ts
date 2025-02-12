@@ -39,32 +39,46 @@ export function useJobItem(id: number | null) {
   return { jobItem, isLoading } as const;
 }
 
+// --------------------------------------------------
+
+type JobItemsApiResponse = {
+  public: boolean;
+  sorted: boolean;
+  jobItems: JobItem[];
+};
+
+const fetchJobItems = async (
+  searchText: string
+): Promise<JobItemsApiResponse> => {
+  const response = await fetch(`${BASE_API_URL}?search=${searchText}`);
+  const data = await response.json();
+  return data;
+};
+
 export function useJobItems(searchText: string) {
-  const [jobItems, setJobItems] = useState<JobItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // this is called derived state
-  const jobItemsSliced = jobItems.slice(0, 7); // index 7 is not included
-  const totalNumberOfResults = jobItems.length; // also a derived state
-
-  useEffect(() => {
-    if (!searchText) {
-      return;
+  const { data, isInitialLoading } = useQuery(
+    ["job-items", searchText],
+    () => fetchJobItems(searchText),
+    {
+      staleTime: 1000 * 60 * 60, // 1 hour
+      refetchOnWindowFocus: false,
+      retry: false,
+      enabled: Boolean(searchText),
+      onError: (error) => {
+        console.log(error);
+      },
     }
+  );
 
-    const fetchData = async () => {
-      setIsLoading(true);
-      const response = await fetch(`${BASE_API_URL}?search=${searchText}`);
-      const data = await response.json();
-      setIsLoading(false);
-      setJobItems(data.jobItems);
-    };
-
-    fetchData();
-  }, [searchText]);
-
-  return { jobItemsSliced, isLoading, totalNumberOfResults };
+  const jobItems = data?.jobItems;
+  const isLoading = isInitialLoading; // fixed the loading state
+  return {
+    jobItems,
+    isLoading,
+  };
 }
+
+// --------------------------------------------------
 
 export function useActiveId() {
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -85,6 +99,8 @@ export function useActiveId() {
 
   return activeId;
 }
+
+// --------------------------------------------------
 
 export function useDebounce<T>(value: T, delay = 500): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
